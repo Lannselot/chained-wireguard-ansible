@@ -11,18 +11,14 @@
     command: uname -r
     register: kernel_release
 
-  - name: Add the WireGuard PPA
-    apt_repository:
-      repo: 'ppa:wireguard/wireguard'
+  #- name: Add the WireGuard PPA
+  #  apt_repository:
+  #    repo: 'ppa:wireguard/wireguard'
       
   - name: Install WireGuard and other requirements 
     apt:
       name:
-        - linux-headers-{{ kernel_release.stdout }}
-        - linux-headers-generic
-        - wireguard-dkms
-        - wireguard-tools
-        - python2.7        
+        - wireguard
       state: present
       update_cache: true
 
@@ -47,6 +43,10 @@
       server_public_key: "{{ key_files.results[1].stdout }}"
       client_private_key: "{{ key_files.results[2].stdout }}"
       client_public_key: "{{ key_files.results[3].stdout }}"
+
+  - name: Get default network interface
+    command: "route | grep '^default' | grep -o '[^ ]*$'"
+    register: default_interface
 
   - name: Generate server config
     template:
@@ -78,11 +78,11 @@
       state: present
       reload: yes
 
-  - name: Enable IPv4 forwarding continued
-    command: echo 1 > /proc/sys/net/ipv4/ip_forward 
+  #- name: Enable IPv4 forwarding continued
+  #  command: echo 1 > /proc/sys/net/ipv4/ip_forward 
 
-  - name: Set up firewall rules
-    include: firewall.yml
+  #- name: Set up firewall rules
+  #  include: firewall.yml
 
   - name: Set up unbound for DNS
     include: dns.yml

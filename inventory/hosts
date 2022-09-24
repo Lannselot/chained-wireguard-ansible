@@ -1,0 +1,4 @@
+[all]
+<ip> ansible_python_interpreter=/usr/bin/python3
+vps71655.xxvps.net ansible_aliase = gate
+wggoloymer.do.net ansible_aliase = middleman
